@@ -117,6 +117,7 @@ void Viewer::Run()
         {
             mpSystem->ActivateLocalizationMode();
             bLocalizationMode = true;
+            mpSystem->SaveMap();
         }
         else if(!menuLocalizationMode && bLocalizationMode)
         {

@@ -22,9 +22,12 @@
 
 #include "System.h"
 #include "Converter.h"
+#include <cstdio>
 #include <thread>
 #include <pangolin/pangolin.h>
 #include <iomanip>
+
+const string storefilename="stored_SLAM.bin";
 
 namespace ORB_SLAM2
 {
@@ -77,7 +80,13 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     //Create the Map
     mpMap = new Map();
     
-    
+    FILE *mapfile;
+    mapfile = fopen(storefilename.c_str(),"r");
+    if(mapfile){
+        mpMap->Load(storefilename,*mpVocabulary);
+        for(auto kf: mpMap->GetAllKeyFrames())
+            mpKeyFrameDatabase->add(kf);
+    }
     
 
     //Create Drawers. These are used by the Viewer
@@ -490,6 +499,11 @@ vector<cv::KeyPoint> System::GetTrackedKeyPointsUn()
 {
     unique_lock<mutex> lock(mMutexState);
     return mTrackedKeyPointsUn;
+}
+
+bool System::SaveMap() {
+    cerr << "System Saving to " << storefilename << endl;
+    return mpMap->Save(storefilename);
 }
 
 } //namespace ORB_SLAM
