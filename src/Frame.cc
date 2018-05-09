@@ -432,7 +432,7 @@ void Frame::UndistortKeyPoints()
         mvKeysUn[i]=kp;
     }
 }
-inline void Frame::InitializeScaleLevels() {
+void Frame::InitializeScaleLevels() {
     mnScaleLevels = mpORBextractorLeft->GetLevels();
     mfScaleFactor = mpORBextractorLeft->GetScaleFactor();
     mfLogScaleFactor = log(mfScaleFactor);
