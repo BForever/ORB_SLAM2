@@ -670,12 +670,13 @@ void LoopClosing::RunGlobalBundleAdjustment(unsigned long nLoopKF)
                 usleep(1000);
             }
 
+            cerr<<"try get lock"<<endl;
             // Get Map Mutex
             unique_lock<mutex> lock(mpMap->mMutexMapUpdate);
-
+            cerr<<"get lock"<<endl;
             // Correct keyframes starting at map first keyframe
             list<KeyFrame*> lpKFtoCheck(mpMap->mvpKeyFrameOrigins.begin(),mpMap->mvpKeyFrameOrigins.end());
-
+            cerr<<"while(!lpKFtoCheck.empty())"<<endl;
             while(!lpKFtoCheck.empty())
             {
                 KeyFrame* pKF = lpKFtoCheck.front();
@@ -701,7 +702,7 @@ void LoopClosing::RunGlobalBundleAdjustment(unsigned long nLoopKF)
 
             // Correct MapPoints
             const vector<MapPoint*> vpMPs = mpMap->GetAllMapPoints();
-
+            cerr<<"for(size_t i=0; i<vpMPs.size(); i++)"<<endl;
             for(size_t i=0; i<vpMPs.size(); i++)
             {
                 MapPoint* pMP = vpMPs[i];

@@ -403,7 +403,7 @@ void Frame::ComputeBoW()
 
 void Frame::UndistortKeyPoints()
 {
-    if(mDistCoef.at<float>(0)==0.0)
+    //if(mDistCoef.at<float>(0)==0.0)
     {
         mvKeysUn=mvKeys;
         return;
