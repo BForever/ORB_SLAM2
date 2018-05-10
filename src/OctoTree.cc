@@ -1,4 +1,6 @@
 #include "OctoTree.h"
+
+#include "Converter.h"
 namespace ORB_SLAM2 {
 
 OctoTree::OctoTree(double resolution_):tree(resolution)

@@ -50,6 +50,7 @@ class Map;
 class LocalMapping;
 class LoopClosing;
 class System;
+class OctoTree;
 
 class Tracking
 {  
