@@ -38,7 +38,7 @@ class KeyFrame;
 class Map
 {
 public:
-    Map();
+    Map(const string &strSettingPath);
 
     void AddKeyFrame(KeyFrame* pKF);
     void AddMapPoint(MapPoint* pMP);
@@ -68,8 +68,9 @@ public:
 
     // This avoid that two points are created simultaneously in separate threads (id conflict)
     std::mutex mMutexPointCreation;
-
+    const string mstrSettingPath;
 protected:
+    
     std::set<MapPoint*> mspMapPoints;
     std::set<KeyFrame*> mspKeyFrames;
 

@@ -28,7 +28,7 @@
 namespace ORB_SLAM2
 {
 
-Map::Map():mnMaxKFid(0),mnBigChangeIdx(0)
+Map::Map(const string &strSettingPath):mnMaxKFid(0),mnBigChangeIdx(0),mstrSettingPath(strSettingPath)
 {
 }
 
@@ -259,7 +259,21 @@ bool Map::Load(const string &filename, ORBVocabulary &voc) {
 #ifdef DEBUG
     cerr<<"kf_by_id end"<<endl;
 #endif
+    
+    cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
+    float fx = fSettings["Camera.fx"];
+    float fy = fSettings["Camera.fy"];
+    float cx = fSettings["Camera.cx"];
+    float cy = fSettings["Camera.cy"];
+    
+    cv::Mat K = cv::Mat::eye(3,3,CV_32F);
+    K.at<float>(0,0) = fx;
+    K.at<float>(1,1) = fy;
+    K.at<float>(0,2) = cx;
+    K.at<float>(1,2) = cy;
+    
     for(auto kf: kf_by_order) {
+        K.copyTo(kf->mK);
         unsigned long int parent_id;
         f.read((char*)&parent_id, sizeof(parent_id));          // parent id
         if (parent_id != ULONG_MAX)
