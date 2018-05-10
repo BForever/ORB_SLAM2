@@ -21,7 +21,7 @@ public:
 protected:
     double resolution = 0.04;
 public:
-    octomap::ColorOcTree tree;
+    octomap::OcTree tree;
 };
 
 }

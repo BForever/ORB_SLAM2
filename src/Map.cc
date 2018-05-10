@@ -27,17 +27,7 @@
 
 namespace ORB_SLAM2
 {
-static void printTree(KeyFrame* kf,int depth)
-{
-    for(int i=0;i<depth;i++){
-        cerr<<"  ";
-    }
-    
-    cerr<<kf->mnId<<endl;
-    for(auto &it:kf->mspChildrens){
-        printTree(it,depth+1);
-    }
-}
+
 Map::Map(const string &strSettingPath):mnMaxKFid(0),mnBigChangeIdx(0),mstrSettingPath(strSettingPath)
 {
 }
@@ -249,26 +239,22 @@ bool Map::Load(const string &filename, ORBVocabulary &voc) {
     f.read((char*)&nb_keyframes, sizeof(nb_keyframes));
     cerr << "reading " << nb_keyframes << " keyframe" << endl;
     vector<KeyFrame*> kf_by_order;
+
+    max_id=0;
     for (unsigned int i=0; i<nb_keyframes; i++) {
         KeyFrame* kf = _ReadKeyFrame(f, voc, amp, &orb_ext);
+        if (kf->mnId>=max_id) max_id=kf->mnId;
         AddKeyFrame(kf);
         kf_by_order.push_back(kf);
-#ifdef DEBUG
-        cerr<<"Read kf: "<<i<<endl;
-#endif
     }
+    KeyFrame::nNextId=max_id+1;
+
     
     // Load Spanning tree
     map<unsigned long int, KeyFrame*> kf_by_id;
-    
-#ifdef DEBUG
-    cerr<<"kf_by_id start"<<endl;
-#endif
+
     for(auto kf: mspKeyFrames)
         kf_by_id[kf->mnId] = kf;
-#ifdef DEBUG
-    cerr<<"kf_by_id end"<<endl;
-#endif
     
     cv::FileStorage fSettings(mstrSettingPath, cv::FileStorage::READ);
     float fx = fSettings["Camera.fx"];
@@ -287,8 +273,10 @@ bool Map::Load(const string &filename, ORBVocabulary &voc) {
         K.copyTo(kf->mK);
         unsigned long int parent_id;
         f.read((char*)&parent_id, sizeof(parent_id));          // parent id
-        if (parent_id != ULONG_MAX)
+        if (parent_id != ULONG_MAX){
             kf->ChangeParent(kf_by_id[parent_id]);
+            kf->mbFirstConnection=false;
+        }
         unsigned long int nb_con;                             // number connected keyframe
         f.read((char*)&nb_con, sizeof(nb_con));
         for (unsigned long int i=0; i<nb_con; i++) {
@@ -298,7 +286,6 @@ bool Map::Load(const string &filename, ORBVocabulary &voc) {
             kf->AddConnection(kf_by_id[id], weight);
         }
     }
-    printTree(kf_by_id[0],1);
     // MapPoints descriptors
     for(auto mp: amp) {
         mp->ComputeDistinctiveDescriptors();
@@ -402,7 +389,7 @@ bool Map::Save(const string &filename) {
     }
     
     cerr << "  writing " << mspKeyFrames.size() << " keyframes" << endl;
-    printTree(*mspKeyFrames.begin(),1);
+
     unsigned long int nbKeyFrames = mspKeyFrames.size();
     f.write((char*)&nbKeyFrames, sizeof(nbKeyFrames));
     for(auto kf: mspKeyFrames)

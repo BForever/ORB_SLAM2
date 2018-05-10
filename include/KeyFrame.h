@@ -214,9 +214,9 @@ protected:
     std::vector<int> mvOrderedWeights;
 
     // Spanning Tree and Loop Edges
+public:
     bool mbFirstConnection;
     KeyFrame* mpParent;
-public:
     std::set<KeyFrame*> mspChildrens;
 protected:
     std::set<KeyFrame*> mspLoopEdges;

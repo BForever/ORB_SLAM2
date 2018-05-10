@@ -649,6 +649,7 @@ void LoopClosing::RunGlobalBundleAdjustment(unsigned long nLoopKF)
     int idx =  mnFullBAIdx;
     Optimizer::GlobalBundleAdjustemnt(mpMap,10,&mbStopGBA,nLoopKF,false);
 
+
     // Update all MapPoints and KeyFrames
     // Local Mapping was active during BA, that means that there might be new keyframes
     // not included in the Global BA and they are not consistent with the updated map.
@@ -670,18 +671,15 @@ void LoopClosing::RunGlobalBundleAdjustment(unsigned long nLoopKF)
                 usleep(1000);
             }
 
-            cerr<<"try get lock"<<endl;
             // Get Map Mutex
             unique_lock<mutex> lock(mpMap->mMutexMapUpdate);
-            cerr<<"get lock"<<endl;
             // Correct keyframes starting at map first keyframe
             list<KeyFrame*> lpKFtoCheck(mpMap->mvpKeyFrameOrigins.begin(),mpMap->mvpKeyFrameOrigins.end());
-            cerr<<"while(!lpKFtoCheck.empty())"<<endl;
-            
+
             while(!lpKFtoCheck.empty())
             {
                 KeyFrame* pKF = lpKFtoCheck.front();
-                cerr<<"ID:"<<pKF->mnId<<endl;
+                //cerr<<"ID:"<<pKF->mnId<<endl;
                 const set<KeyFrame*> sChilds = pKF->GetChilds();
                 cv::Mat Twc = pKF->GetPoseInverse();
                 for(set<KeyFrame*>::const_iterator sit=sChilds.begin();sit!=sChilds.end();sit++)

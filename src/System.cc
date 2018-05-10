@@ -84,16 +84,17 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     
     FILE *mapfile,*treefile;
     mapfile = fopen(storefilename.c_str(),"r");
-    treefile=fopen("SavedOctoTree.ot","r");
+    treefile=fopen("SavedOctoTree.bt","r");
     if(mapfile){
         fclose(mapfile);
         mpMap->Load(storefilename,*mpVocabulary);
+
         for(auto kf: mpMap->GetAllKeyFrames())
             mpKeyFrameDatabase->add(kf);
     }
     if(treefile){
         fclose(treefile);
-        mpOctoTree->loadTree("SavedOctoTree.ot");
+        mpOctoTree->loadTree("SavedOctoTree.bt");
     }
 
     //Create Drawers. These are used by the Viewer
@@ -108,6 +109,11 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     //Initialize the Local Mapping thread and launch
     mpLocalMapper = new LocalMapping(mpMap, mSensor==MONOCULAR);
     mptLocalMapping = new thread(&ORB_SLAM2::LocalMapping::Run,mpLocalMapper);
+
+    for(auto &it:mpMap->mspKeyFrames){
+        mpLocalMapper->InsertKeyFrame(it);
+    }
+
 
     //Initialize the Loop Closing thread and launch
     mpLoopCloser = new LoopClosing(mpMap, mpKeyFrameDatabase, mpVocabulary, mSensor!=MONOCULAR);
