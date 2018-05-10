@@ -216,7 +216,9 @@ protected:
     // Spanning Tree and Loop Edges
     bool mbFirstConnection;
     KeyFrame* mpParent;
+public:
     std::set<KeyFrame*> mspChildrens;
+protected:
     std::set<KeyFrame*> mspLoopEdges;
 
     // Bad flags

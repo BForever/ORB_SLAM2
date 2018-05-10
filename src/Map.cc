@@ -391,6 +391,7 @@ bool Map::Save(const string &filename) {
     }
     
     cerr << "  writing " << mspKeyFrames.size() << " keyframes" << endl;
+    
     unsigned long int nbKeyFrames = mspKeyFrames.size();
     f.write((char*)&nbKeyFrames, sizeof(nbKeyFrames));
     for(auto kf: mspKeyFrames)
@@ -427,5 +428,15 @@ bool Map::Save(const string &filename) {
     
     
 }
-
+static void printTree(KeyFrame* kf,int depth)
+{
+    for(int i=0;i<depth;i++){
+        cerr<<"  ";
+    }
+    
+    cerr<<kf->mnId<<endl;
+    for(auto &it:kf->mspChildrens){
+        printTree(it,depth+1);
+    }
+}
 } //namespace ORB_SLAM
