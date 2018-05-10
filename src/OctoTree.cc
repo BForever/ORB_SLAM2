@@ -9,7 +9,7 @@ OctoTree::OctoTree(double resolution_):tree(resolution)
 }
 void OctoTree::saveTree()
 {
-    tree.writeBinary( "SavedOctoTree.bt" );
+    tree.writeBinary( "SavedOctoTree.ot" );
 }
 bool OctoTree::loadTree(string filename)
 {
