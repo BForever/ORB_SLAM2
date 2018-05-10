@@ -27,7 +27,17 @@
 
 namespace ORB_SLAM2
 {
-
+static void printTree(KeyFrame* kf,int depth)
+{
+    for(int i=0;i<depth;i++){
+        cerr<<"  ";
+    }
+    
+    cerr<<kf->mnId<<endl;
+    for(auto &it:kf->mspChildrens){
+        printTree(it,depth+1);
+    }
+}
 Map::Map(const string &strSettingPath):mnMaxKFid(0),mnBigChangeIdx(0),mstrSettingPath(strSettingPath)
 {
 }
@@ -288,6 +298,7 @@ bool Map::Load(const string &filename, ORBVocabulary &voc) {
             kf->AddConnection(kf_by_id[id], weight);
         }
     }
+    printTree(kf_by_id[0],1);
     // MapPoints descriptors
     for(auto mp: amp) {
         mp->ComputeDistinctiveDescriptors();
@@ -391,7 +402,7 @@ bool Map::Save(const string &filename) {
     }
     
     cerr << "  writing " << mspKeyFrames.size() << " keyframes" << endl;
-    
+    printTree(*mspKeyFrames.begin(),1);
     unsigned long int nbKeyFrames = mspKeyFrames.size();
     f.write((char*)&nbKeyFrames, sizeof(nbKeyFrames));
     for(auto kf: mspKeyFrames)
@@ -428,15 +439,5 @@ bool Map::Save(const string &filename) {
     
     
 }
-static void printTree(KeyFrame* kf,int depth)
-{
-    for(int i=0;i<depth;i++){
-        cerr<<"  ";
-    }
-    
-    cerr<<kf->mnId<<endl;
-    for(auto &it:kf->mspChildrens){
-        printTree(it,depth+1);
-    }
-}
+
 } //namespace ORB_SLAM
