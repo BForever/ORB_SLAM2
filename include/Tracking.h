@@ -37,6 +37,7 @@
 #include "Initializer.h"
 #include "MapDrawer.h"
 #include "System.h"
+#include "OctoTree.h"
 
 #include <mutex>
 
@@ -55,7 +56,7 @@ class Tracking
 
 public:
     Tracking(System* pSys, ORBVocabulary* pVoc, FrameDrawer* pFrameDrawer, MapDrawer* pMapDrawer, Map* pMap,
-             KeyFrameDatabase* pKFDB, const string &strSettingPath, const int sensor);
+             KeyFrameDatabase* pKFDB,OctoTree* pOctoTree, const string &strSettingPath, const int sensor);
 
     // Preprocess the input and call Track(). Extract features and performs stereo matching.
     cv::Mat GrabImageStereo(const cv::Mat &imRectLeft,const cv::Mat &imRectRight, const double &timestamp);
@@ -94,7 +95,9 @@ public:
 
     // Current Frame
     Frame mCurrentFrame;
+    cv::Mat mImRGB;
     cv::Mat mImGray;
+    cv::Mat mImDepth;
 
     // Initialization Variables (Monocular)
     std::vector<int> mvIniLastMatches;
@@ -180,6 +183,9 @@ protected:
 
     //Map
     Map* mpMap;
+    
+    //Octo tree
+    OctoTree* mpOctoTree;
 
     //Calibration matrix
     cv::Mat mK;

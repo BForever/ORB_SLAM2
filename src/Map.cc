@@ -23,6 +23,8 @@
 #include "Converter.h"
 #include<mutex>
 
+#define DEBUG
+
 namespace ORB_SLAM2
 {
 
@@ -241,13 +243,22 @@ bool Map::Load(const string &filename, ORBVocabulary &voc) {
         KeyFrame* kf = _ReadKeyFrame(f, voc, amp, &orb_ext);
         AddKeyFrame(kf);
         kf_by_order.push_back(kf);
+#ifdef DEBUG
+        cerr<<"Read kf: "<<i<<endl;
+#endif
     }
     
     // Load Spanning tree
     map<unsigned long int, KeyFrame*> kf_by_id;
+    
+#ifdef DEBUG
+    cerr<<"kf_by_id start"<<endl;
+#endif
     for(auto kf: mspKeyFrames)
         kf_by_id[kf->mnId] = kf;
-    
+#ifdef DEBUG
+    cerr<<"kf_by_id end"<<endl;
+#endif
     for(auto kf: kf_by_order) {
         unsigned long int parent_id;
         f.read((char*)&parent_id, sizeof(parent_id));          // parent id

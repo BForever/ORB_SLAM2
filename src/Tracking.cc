@@ -29,6 +29,7 @@
 #include"Converter.h"
 #include"Map.h"
 #include"Initializer.h"
+#include "OctoTree.h"
 
 #include"Optimizer.h"
 #include"PnPsolver.h"
@@ -206,7 +207,9 @@ cv::Mat Tracking::GrabImageStereo(const cv::Mat &imRectLeft, const cv::Mat &imRe
 
 cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB,const cv::Mat &imD, const double &timestamp)
 {
+    mImRGB = imRGB;
     mImGray = imRGB;
+    mImDepth = imD;
     cv::Mat imDepth = imD;
 
     if(mImGray.channels()==3)
@@ -1135,6 +1138,8 @@ void Tracking::CreateNewKeyFrame()
     mpLocalMapper->InsertKeyFrame(pKF);
 
     mpLocalMapper->SetNotStop(false);
+    
+    mpOctoTree->insertKeyFrame(pKF,this->mImRGB,this->mImDepth);
 
     mnLastKeyFrameId = mCurrentFrame.mnId;
     mpLastKeyFrame = pKF;

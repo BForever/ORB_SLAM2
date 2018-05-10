@@ -83,6 +83,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     FILE *mapfile;
     mapfile = fopen(storefilename.c_str(),"r");
     if(mapfile){
+        fclose(mapfile);
         mpMap->Load(storefilename,*mpVocabulary);
         for(auto kf: mpMap->GetAllKeyFrames())
             mpKeyFrameDatabase->add(kf);
