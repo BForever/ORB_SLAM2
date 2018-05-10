@@ -260,7 +260,7 @@ bool Map::Load(const string &filename, ORBVocabulary &voc) {
     cerr<<"kf_by_id end"<<endl;
 #endif
     
-    cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
+    cv::FileStorage fSettings(mstrSettingPath, cv::FileStorage::READ);
     float fx = fSettings["Camera.fx"];
     float fy = fSettings["Camera.fy"];
     float cx = fSettings["Camera.cx"];
@@ -273,6 +273,7 @@ bool Map::Load(const string &filename, ORBVocabulary &voc) {
     K.at<float>(1,2) = cy;
     
     for(auto kf: kf_by_order) {
+        kf->mK.create(K.rows,K.cols,K.type());
         K.copyTo(kf->mK);
         unsigned long int parent_id;
         f.read((char*)&parent_id, sizeof(parent_id));          // parent id

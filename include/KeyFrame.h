@@ -186,7 +186,7 @@ public:
     const int mnMinY;
     const int mnMaxX;
     const int mnMaxY;
-    const cv::Mat mK;
+    cv::Mat mK;
 
 
     // The following variables need to be accessed trough a mutex to be thread safe.
