@@ -80,15 +80,21 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     //Create the Map
     mpMap = new Map();
     
-    FILE *mapfile;
+    mpOctoTree = new OctoTree(0.04);
+    
+    FILE *mapfile,*treefile;
     mapfile = fopen(storefilename.c_str(),"r");
+    treefile=fopen("SavedOctoTree.ot","r");
     if(mapfile){
         fclose(mapfile);
         mpMap->Load(storefilename,*mpVocabulary);
         for(auto kf: mpMap->GetAllKeyFrames())
             mpKeyFrameDatabase->add(kf);
     }
-    mpOctoTree = new OctoTree(0.04);
+    if(treefile){
+        fclose(treefile);
+        mpOctoTree->loadTree("SavedOctoTree.ot");
+    }
 
     //Create Drawers. These are used by the Viewer
     mpFrameDrawer = new FrameDrawer(mpMap);
@@ -504,7 +510,15 @@ vector<cv::KeyPoint> System::GetTrackedKeyPointsUn()
 
 bool System::SaveMap() {
     cerr << "System Saving to " << storefilename << endl;
-    return mpMap->Save(storefilename);
+    bool mapb=mpMap->Save(storefilename);
+    
+    if (!mapb){
+        cerr<<"System Saving failed."<<endl;
+        return false;
+    }
+    
+    mpOctoTree->saveTree();
+    return true;
 }
 
 } //namespace ORB_SLAM

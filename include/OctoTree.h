@@ -16,11 +16,12 @@ public:
     
     // 插入一个keyframe，会更新一次地图
     void insertKeyFrame(KeyFrame *kf, cv::Mat &color,  cv::Mat &depth);
-
+    void saveTree();
+    bool loadTree(string filename);
 protected:
     double resolution = 0.04;
-    
-    octomap::OcTree tree;
+public:
+    octomap::ColorOcTree tree;
 };
 
 }

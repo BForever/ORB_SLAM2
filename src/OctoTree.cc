@@ -7,7 +7,14 @@ OctoTree::OctoTree(double resolution_):tree(resolution)
 {
     resolution=resolution_;
 }
-
+void OctoTree::saveTree()
+{
+    tree.writeBinary( "SavedOctoTree.bt" );
+}
+bool OctoTree::loadTree(string filename)
+{
+    return tree.readBinary(filename);
+}
 void OctoTree::insertKeyFrame(KeyFrame *kf, cv::Mat &color, cv::Mat &depth)
 {
     int maxd = 0;
@@ -32,6 +39,7 @@ void OctoTree::insertKeyFrame(KeyFrame *kf, cv::Mat &color, cv::Mat &depth)
             z = static_cast<float> (transform(2, 0) * pt.coeffRef(0) + transform(2, 1) * pt.coeffRef(1) +
                                     transform(2, 2) * pt.coeffRef(2) + transform(2, 3));
             tree.updateNode(octomap::point3d(x, y, z), true);
+            tree.integrateNodeColor(x,y,z,color.ptr<uchar>(m)[n*3+2],color.ptr<uchar>(m)[n*3+1],color.ptr<uchar>(m)[n*3]);
         }
     }
     
