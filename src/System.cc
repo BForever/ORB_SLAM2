@@ -88,7 +88,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         for(auto kf: mpMap->GetAllKeyFrames())
             mpKeyFrameDatabase->add(kf);
     }
-    
+    mpOctoTree = new OctoTree(0.04);
 
     //Create Drawers. These are used by the Viewer
     mpFrameDrawer = new FrameDrawer(mpMap);
@@ -97,7 +97,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     //Initialize the Tracking thread
     //(it will live in the main thread of execution, the one that called this constructor)
     mpTracker = new Tracking(this, mpVocabulary, mpFrameDrawer, mpMapDrawer,
-                             mpMap, mpKeyFrameDatabase, strSettingsFile, mSensor);
+                             mpMap, mpKeyFrameDatabase,mpOctoTree, strSettingsFile, mSensor);
 
     //Initialize the Local Mapping thread and launch
     mpLocalMapper = new LocalMapping(mpMap, mSensor==MONOCULAR);
